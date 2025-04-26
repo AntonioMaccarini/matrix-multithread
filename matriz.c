@@ -81,6 +81,15 @@ void *matriz_multiplicar_paralelo(void *args)
     double sum;
 
     for (i = tid; i < A->linhas; i += num_threads) {
+      // Cada thread vai ser responsável pela criação
+      // de linhas específicas da matriz resultante (C)
+      // por exemplo matrix 10x10 e 4 thereads:
+
+      // thread 0 -> linha(C) 0,4,8
+      // thread 1 -> linha(C) 1,5,9
+      // thread 2 -> linha(C) 2,6
+      // thread 3 -> linha(C) 3,7
+
         for (j = 0; j < B->colunas; j++) {
             sum = 0.0;
             for (k = 0; k < A->colunas; k++) {

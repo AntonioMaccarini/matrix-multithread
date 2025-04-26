@@ -27,20 +27,14 @@ int main(int argc, char **argv)
     matriz_preencher_rand(A);
     matriz_preencher_rand(B);
 
-    //printf("Matriz A\n");
-    //matriz_imprimir(A);
-
-    //printf("Matriz B\n");
-    //matriz_imprimir(B);
-
-	// aqui criamos tudo
 	thread_params *parametros = NULL;
 	pthread_t *threads = NULL;
 	parametros = (thread_params*) malloc(sizeof(thread_params) * num_threads);
 	threads = (pthread_t*) malloc(sizeof(pthread_t) * num_threads);
+
+    C = matriz_criar(linhas, colunas); 
 	
-    //SOMAR PARALELOS
-    // C = matriz_criar(linhas, colunas); 
+    //SOMAR PARALELO
 	// for (int i = 0; i < num_threads; i++) {
 	// 	parametros[i].tid = i;
 	// 	parametros[i].A = A;
@@ -50,28 +44,22 @@ int main(int argc, char **argv)
 	// 	pthread_create(&threads[i], NULL, matriz_somar_paralelo, &parametros[i]);
 	// }
 
-    // //C = matriz_somar(A, B);
     // for (int i = 0; i < num_threads; i++) {
 	//     pthread_join(threads[i], NULL);
     // }
+    
+    for (int i = 0; i < num_threads; i++) {
+        parametros[i].tid = i;
+        parametros[i].A = A;
+        parametros[i].B = B;
+        parametros[i].C = C;
+        parametros[i].num_threads = num_threads;
+        pthread_create(&threads[i], NULL, matriz_multiplicar_paralelo, &parametros[i]);
+    }
 
-
-//    printf("Matriz C\n");
-//    matriz_imprimir(C);
-C = matriz_criar(linhas, colunas); 
-
-for (int i = 0; i < num_threads; i++) {
-    parametros[i].tid = i;
-    parametros[i].A = A;
-    parametros[i].B = B;
-    parametros[i].C = C;
-    parametros[i].num_threads = num_threads;
-    pthread_create(&threads[i], NULL, matriz_multiplicar_paralelo, &parametros[i]);
-}
-
-for (int i = 0; i < num_threads; i++) {
-    pthread_join(threads[i], NULL);
-}
+    for (int i = 0; i < num_threads; i++) {
+        pthread_join(threads[i], NULL);
+    }
 
     matriz_destruir(A);
     matriz_destruir(B);
