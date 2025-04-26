@@ -7,7 +7,6 @@ matriz_t *matriz_criar(int linhas, int colunas)
 {
    int i;
    matriz_t *retorno = NULL;
-   // malloc usada para alocacao de memoria
    retorno = (matriz_t *) malloc(sizeof(matriz_t));
    retorno->linhas = linhas;
    retorno->colunas = colunas;
@@ -81,11 +80,10 @@ void *matriz_multiplicar_paralelo(void *args)
     int i, j, k;
     double sum;
 
-    // Cada thread calcula linhas diferentes
     for (i = tid; i < A->linhas; i += num_threads) {
         for (j = 0; j < B->colunas; j++) {
             sum = 0.0;
-            for (k = 0; k < A->colunas; k++) { // Importante: usar A->colunas
+            for (k = 0; k < A->colunas; k++) {
                 sum += A->dados[i][k] * B->dados[k][j];
             }
             C->dados[i][j] = sum;
@@ -95,26 +93,12 @@ void *matriz_multiplicar_paralelo(void *args)
     pthread_exit(NULL);
 }
 
-
-void matriz_imprimir(matriz_t *m)
-{
-   
-   int i, j;
-   for (i = 0; i < m->linhas; i++) {
-      for (j = 0; j < m->colunas; j++) {
-         printf("%.17f ", m->dados[i][j]);
-      }
-      printf("\n");
-   }
-}
-
 void *matriz_somar_paralelo(void *args)
 {
 	thread_params *parametros = (thread_params *) args;
 	printf("sou a thread %d!!!!\n", parametros->tid);
-//	parametros->num_threads
 	int j;
-	int i = parametros->tid; //certo
+	int i = parametros->tid;
 	while (i < parametros->A->linhas) {
 	      for (j = 0; j < parametros->A->colunas; j++) {
         	 parametros->C->dados[i][j] = parametros->A->dados[i][j] + parametros->B->dados[i][j];
@@ -135,5 +119,17 @@ matriz_t *matriz_somar(matriz_t *A, matriz_t *B)
    }
 }
     return retorno;
+}
+
+void matriz_imprimir(matriz_t *m)
+{
+   
+   int i, j;
+   for (i = 0; i < m->linhas; i++) {
+      for (j = 0; j < m->colunas; j++) {
+         printf("%.17f ", m->dados[i][j]);
+      }
+      printf("\n");
+   }
 }
 
