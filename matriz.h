@@ -27,6 +27,8 @@ void matriz_preencher(matriz_t *m, double valor);
 
 matriz_t *matriz_multiplicar(matriz_t *A, matriz_t *B);
 
+void *matriz_multiplicar_paralelo(void *args);
+
 void *matriz_somar_paralelo(void *args);
 
 matriz_t *matriz_somar(matriz_t *A, matriz_t *B);

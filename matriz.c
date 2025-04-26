@@ -69,6 +69,33 @@ matriz_t *matriz_multiplicar(matriz_t *A, matriz_t *B)
     return m;
 }
 
+void *matriz_multiplicar_paralelo(void *args)
+{
+    thread_params *parametros = (thread_params *) args;
+    int tid = parametros->tid;
+    int num_threads = parametros->num_threads;
+    matriz_t *A = parametros->A;
+    matriz_t *B = parametros->B;
+    matriz_t *C = parametros->C;
+
+    int i, j, k;
+    double sum;
+
+    // Cada thread calcula linhas diferentes
+    for (i = tid; i < A->linhas; i += num_threads) {
+        for (j = 0; j < B->colunas; j++) {
+            sum = 0.0;
+            for (k = 0; k < A->colunas; k++) { // Importante: usar A->colunas
+                sum += A->dados[i][k] * B->dados[k][j];
+            }
+            C->dados[i][j] = sum;
+        }
+    }
+
+    pthread_exit(NULL);
+}
+
+
 void matriz_imprimir(matriz_t *m)
 {
    
