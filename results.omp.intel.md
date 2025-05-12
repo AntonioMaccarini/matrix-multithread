@@ -1,5 +1,3 @@
-intel
-
 pragma omp parallel for private(i, j, k, sum) shared(A, B, m)
 
 Running with 1 threads...
