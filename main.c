@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include "matriz.h"
 #include <pthread.h>
+#include <omp.h>
 
 int main(int argc, char **argv)
 {
@@ -27,10 +28,10 @@ int main(int argc, char **argv)
     matriz_preencher_rand(A);
     matriz_preencher_rand(B);
 
-	thread_params *parametros = NULL;
-	pthread_t *threads = NULL;
-	parametros = (thread_params*) malloc(sizeof(thread_params) * num_threads);
-	threads = (pthread_t*) malloc(sizeof(pthread_t) * num_threads);
+	// thread_params *parametros = NULL;
+	// pthread_t *threads = NULL;
+	// parametros = (thread_params*) malloc(sizeof(thread_params) * num_threads);
+	// threads = (pthread_t*) malloc(sizeof(pthread_t) * num_threads);
 
     C = matriz_criar(linhas, colunas); 
 	
@@ -48,18 +49,23 @@ int main(int argc, char **argv)
 	//     pthread_join(threads[i], NULL);
     // }
     
-    for (int i = 0; i < num_threads; i++) {
-        parametros[i].tid = i;
-        parametros[i].A = A;
-        parametros[i].B = B;
-        parametros[i].C = C;
-        parametros[i].num_threads = num_threads;
-        pthread_create(&threads[i], NULL, matriz_multiplicar_paralelo, &parametros[i]);
-    }
+    // multiple threads
+    // for (int i = 0; i < num_threads; i++) {
+    //     parametros[i].tid = i;
+    //     parametros[i].A = A;
+    //     parametros[i].B = B;
+    //     parametros[i].C = C;
+    //     parametros[i].num_threads = num_threads;
+    //     pthread_create(&threads[i], NULL, matriz_multiplicar_paralelo, &parametros[i]);
+    // }
 
-    for (int i = 0; i < num_threads; i++) {
-        pthread_join(threads[i], NULL);
-    }
+    // for (int i = 0; i < num_threads; i++) {
+    //     pthread_join(threads[i], NULL);
+    // }
+
+    omp_set_num_threads(num_threads);
+
+    C = matriz_multiplicar_paralelo_openmp(A, B);
 
     matriz_destruir(A);
     matriz_destruir(B);

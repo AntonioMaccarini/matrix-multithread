@@ -102,6 +102,32 @@ void *matriz_multiplicar_paralelo(void *args)
     pthread_exit(NULL);
 }
 
+matriz_t *matriz_multiplicar_paralelo_openmp(matriz_t *A, matriz_t *B)
+{
+   int i, j, k;
+   double sum;
+   matriz_t *m = matriz_criar(A->linhas, B->colunas);
+   
+   // #pragma omp parallel for private(i, j, k, sum) shared(A, B, m)
+   #pragma omp parallel for private(i, j, k, sum) shared(A, B, m) schedule(dynamic, 10)
+   // #pragma omp parallel for private(i, j, k, sum) shared(A, B, m) schedule(dynamic, 40)
+   // #pragma omp parallel for private(i, j, k, sum) shared(A, B, m) schedule(dynamic, 70)
+   // #pragma omp parallel for private(i, j, k, sum) shared(A, B, m) schedule(dynamic, 100)
+   // #pragma omp parallel for private(i, j, k, sum) shared(A, B, m) schedule(guided)
+   for (i = 0; i < m->linhas; i++) {
+      for (j = 0; j < m->colunas; j++) {
+         sum = 0.0;
+         for (k = 0; k < m->colunas; k++) {
+            sum += A->dados[i][k] * B->dados[k][j];
+         }
+         m->dados[i][j] = sum;
+      }
+   }
+    return m;
+}
+
+
+
 void *matriz_somar_paralelo(void *args)
 {
 	thread_params *parametros = (thread_params *) args;

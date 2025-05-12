@@ -1,22 +1,22 @@
 # GNU Makefile
 
 CC = gcc 
-CCFLAGS = -Wall -lpthread
-LDFLAGS = 
+CCFLAGS = -Wall -fopenmp -lpthread
+LDFLAGS = -fopenmp
 TARGET = main
 
 %.o: %.c
 	$(CC) $(CCFLAGS) -c $<
 
 %: %.o
-	$(CC) $(LDFLAGS) $^ -o $@ 
+	$(CC) $(CCFLAGS) $^ -o $@ $(LDFLAGS)
 
 all: $(TARGET)
 
-# Dependencias
-
-main: matriz.o main.c
+# Dependências
+main: matriz.o main.o
 matriz.o: matriz.c matriz.h
+main.o: main.c matriz.h
 
 clean:
 	rm -f *.o *~ $(TARGET)
